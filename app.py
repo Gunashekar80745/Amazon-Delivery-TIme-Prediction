@@ -1,15 +1,17 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import pickle
-import traceback
 
-# Configure Streamlit page
-st.set_page_config(
-    page_title="🚚 Amazon Delivery Time Prediction",
-    page_icon="🚚",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.title("🚚 Test App")
+st.write("If you see this, the deployment works!")
 
-# [REST OF THE STREAMLIT CODE FROM MY PREVIOUS RESPONSE]
+# Test basic functionality
+df = pd.DataFrame({
+    'col1': [1, 2, 3],
+    'col2': [4, 5, 6]
+})
+
+st.write("Test dataframe:")
+st.dataframe(df)
+
+st.success("✅ App is working!")
