@@ -1,15 +1,12 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import pickle
-import traceback
 
-# Configure Streamlit page
-st.set_page_config(
-    page_title="🚚 Amazon Delivery Time Prediction",
-    page_icon="🚚",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.title("🚚 Ultra-Simple Test")
+st.write("If you see this, your deployment works!")
+st.success("✅ No infinite loops here!")
 
-# [REST OF THE STREAMLIT CODE FROM MY PREVIOUS RESPONSE]
+# Simple input
+name = st.text_input("Enter your name:")
+if name:
+    st.write(f"Hello {name}!")
+
+st.balloons()
