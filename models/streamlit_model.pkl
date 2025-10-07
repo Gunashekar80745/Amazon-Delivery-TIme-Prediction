@@ -1,0 +1,83 @@
+# ===========================================
+# Streamlit App: Amazon Delivery Time Prediction
+# ===========================================
+
+import streamlit as st
+import pandas as pd
+import joblib
+import os
+
+# -------------------------------
+# Load trained model
+# -------------------------------
+MODEL_PATH = "models/best_model_pipeline.pkl"
+
+st.set_page_config(page_title="Amazon Delivery Time Prediction", layout="centered")
+
+st.title("🚚 Amazon Delivery Time Prediction")
+st.markdown("""
+Predict the estimated delivery time (in hours) based on order, agent, and environment details.
+""")
+
+if not os.path.exists(MODEL_PATH):
+    st.error(f"❌ Model file not found at `{MODEL_PATH}`.\n\n"
+             "Please ensure that you have trained and exported the model from Colab "
+             "and placed it in a folder named `models/` in your project root.")
+    st.stop()
+
+model = joblib.load(MODEL_PATH)
+
+# -------------------------------
+# Input fields
+# -------------------------------
+st.header("Enter Order Details")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    agent_age = st.slider("Agent Age", 18, 65, 30)
+    agent_rating = st.slider("Agent Rating", 1.0, 5.0, 4.5, step=0.1)
+    distance_km = st.number_input("Distance (km)", min_value=0.1, max_value=1000.0, value=5.0)
+    vehicle = st.selectbox("Vehicle Type", ["bike", "car", "scooter", "truck", "other"])
+    area = st.selectbox("Delivery Area", ["urban", "metropolitan", "rural", "other"])
+
+with col2:
+    weather = st.selectbox("Weather Conditions", ["clear", "cloudy", "rain", "storm", "unknown", "other"])
+    traffic = st.selectbox("Traffic Conditions", ["low", "medium", "high", "unknown", "other"])
+    category = st.selectbox("Product Category", ["electronics", "clothing", "grocery", "other"])
+    order_hour = st.slider("Order Hour (0–23)", 0, 23, 12)
+    order_wday = st.selectbox("Order Day of Week", ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
+
+is_weekend = 1 if order_wday in ["Sat", "Sun"] else 0
+order_month = st.slider("Order Month (1–12)", 1, 12, 6)
+
+# -------------------------------
+# Prepare data for prediction
+# -------------------------------
+input_data = pd.DataFrame([{
+    "Agent_Age": agent_age,
+    "Agent_Rating": agent_rating,
+    "Weather": weather.lower(),
+    "Traffic": traffic.lower(),
+    "Vehicle": vehicle.lower(),
+    "Area": area.lower(),
+    "Category": category.lower(),
+    "distance_km": distance_km,
+    "order_hour": order_hour,
+    "order_wday": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].index(order_wday),
+    "is_weekend": is_weekend,
+    "order_month": order_month
+}])
+
+st.subheader("Preview of Input Data")
+st.dataframe(input_data)
+
+# -------------------------------
+# Predict delivery time
+# -------------------------------
+if st.button("Predict Delivery Time"):
+    try:
+        prediction = model.predict(input_data)[0]
+        st.success(f"🕒 Estimated Delivery Time: **{prediction:.2f} hours**")
+    except Exception as e:
+        st.error(f"❌ Prediction failed: {e}")
