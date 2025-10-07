@@ -10,7 +10,7 @@ import os
 # -------------------------------
 # Load trained model
 # -------------------------------
-MODEL_PATH = "models/best_model_pipeline.pkl"
+MODEL_PATH = "models/gradient_boosting_pipeline.pkl"
 
 st.set_page_config(page_title="Amazon Delivery Time Prediction", layout="centered")
 
@@ -81,3 +81,4 @@ if st.button("Predict Delivery Time"):
         st.success(f"🕒 Estimated Delivery Time: **{prediction:.2f} hours**")
     except Exception as e:
         st.error(f"❌ Prediction failed: {e}")
+
